@@ -95,7 +95,7 @@ elif page == "Arbitration Workflow":
     
     tab1, tab2, tab3, tab4 = st.tabs(["Identification", "Meeting", "Integration", "Tracking"])
     
-     with tab1:
+    with tab1:
         st.subheader("Conflict Matrix")
         matrix_df = pd.DataFrame([
             ["Single Metric", "Auto-Negotiation", "2hrs"],
