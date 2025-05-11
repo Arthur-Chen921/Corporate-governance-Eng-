@@ -95,11 +95,32 @@ elif page == "Arbitration Workflow":
     
     tab1, tab2, tab3, tab4 = st.tabs(["Identification", "Meeting", "Integration", "Tracking"])
     
-    with tab1:
-        # ... [existing tab1 content] ...
-
+     with tab1:
+        st.subheader("Conflict Matrix")
+        matrix_df = pd.DataFrame([
+            ["Single Metric", "Auto-Negotiation", "2hrs"],
+            ["Dual Conflict", "Cross-Review", "8hrs"],
+            ["Triple Conflict", "AI Committee", "24hrs"]
+        ], columns=["Type", "Process", "Deadline"])
+        
+        st.dataframe(matrix_df, use_container_width=True)
+        
+        st.write("**Current Case**:")
+        st.json({
+            "Type": "Triple Conflict",
+            "Process": "AI Committee Review",
+            "Deadline": "24hrs"
+        })
+        
     with tab2:
-        # ... [existing tab2 content] ...
+        st.subheader("Arbitration Process")
+        
+        timeline_df = pd.DataFrame([
+            {"Stage": "Preparation", "Status": "Completed", "Duration": 2},
+            {"Stage": "Evidence", "Status": "Processing", "Duration": 1},
+            {"Stage": "Hearing", "Status": "Pending", "Duration": 3},
+            {"Stage": "Decision", "Status": "Pending", "Duration": 1}
+        ])
 
     # 新增Integration部分
     with tab3:
