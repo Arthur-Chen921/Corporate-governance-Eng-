@@ -90,63 +90,85 @@ Allowance: ±5%""")
                 title="Metrics Comparison")
     st.plotly_chart(fig, use_container_width=True)
 
-# Arbitration workflow page
 elif page == "Arbitration Workflow":
     st.header("⚙️ Three-Stage Governance")
     
     tab1, tab2, tab3, tab4 = st.tabs(["Identification", "Meeting", "Integration", "Tracking"])
     
     with tab1:
-        st.subheader("Conflict Matrix")
-        matrix_df = pd.DataFrame([
-            ["Single Metric", "Auto-Negotiation", "2hrs"],
-            ["Dual Conflict", "Cross-Review", "8hrs"],
-            ["Triple Conflict", "AI Committee", "24hrs"]
-        ], columns=["Type", "Process", "Deadline"])
-        
-        st.dataframe(matrix_df, use_container_width=True)
-        
-        st.write("**Current Case**:")
-        st.json({
-            "Type": "Triple Conflict",
-            "Process": "AI Committee Review",
-            "Deadline": "24hrs"
-        })
-        
+        # ... [existing tab1 content] ...
+
     with tab2:
-        st.subheader("Arbitration Process")
+        # ... [existing tab2 content] ...
+
+    # 新增Integration部分
+    with tab3:
+        st.subheader("System Integration")
         
-        timeline_df = pd.DataFrame([
-            {"Stage": "Preparation", "Status": "Completed", "Duration": 2},
-            {"Stage": "Evidence", "Status": "Processing", "Duration": 1},
-            {"Stage": "Hearing", "Status": "Pending", "Duration": 3},
-            {"Stage": "Decision", "Status": "Pending", "Duration": 1}
+        # 拓扑图数据
+        nodes = pd.DataFrame([
+            {"Node": "ChainAI Core", "Type": "Core", "x": 2, "y": 2},
+            {"Node": "ERP", "Type": "Business", "x": 1, "y": 1},
+            {"Node": "Contract DB", "Type": "Legal", "x": 3, "y": 1},
+            {"Node": "Finance", "Type": "Finance", "x": 2, "y": 0},
+            {"Node": "News Monitor", "Type": "External", "x": 4, "y": 2}
         ])
         
-        col1, col2 = st.columns([3,1])
-        with col1:
-            fig = px.timeline(timeline_df, 
-                            x_start=[0,2,3,6],
-                            x_end=[2,3,6,7],
-                            y="Stage", 
-                            color="Status",
-                            color_discrete_map={
-                                "Completed": "#4CAF50",
-                                "Processing": "#FFC107",
-                                "Pending": "#E0E0E0"
-                            })
-            st.plotly_chart(fig, use_container_width=True)
+        edges = [
+            {"From": "ChainAI Core", "To": "ERP", "Type": "Realtime"},
+            {"From": "ChainAI Core", "To": "Contract DB", "Type": "API"},
+            {"From": "ChainAI Core", "To": "Finance", "Type": "Sync"},
+            {"From": "ChainAI Core", "To": "News Monitor", "Type": "Scrape"}
+        ]
+        
+        fig = px.scatter(nodes, x="x", y="y",
+                        size=[30,20,20,20,20],
+                        color="Type",
+                        text="Node",
+                        title="System Integration Map")
+        
+        # 添加连接线
+        for edge in edges:
+            source = nodes[nodes["Node"] == edge["From"]].iloc[0]
+            target = nodes[nodes["Node"] == edge["To"]].iloc[0]
+            fig.add_shape(
+                type="line",
+                x0=source["x"], y0=source["y"],
+                x1=target["x"], y1=target["y"],
+                line=dict(color="#BDBDBD", width=2)
+            )
             
-        with col2:
-            contact_df = pd.DataFrame([
-                ["Procurement", "Wang Yue", "wangyue@demo.com"],
-                ["Legal", "Zhang Tao", "zhangtao@demo.com"],
-                ["Finance", "Chen Min", "chenmin@demo.com"],
-                ["Chair", "Li Hang", "lihang@demo.com"]
-            ], columns=["Role", "Contact", "Email"])
-            st.dataframe(contact_df, hide_index=True)
-    
-    # Remaining tabs maintain similar pattern...
+        fig.update_traces(marker=dict(size=100),
+                         textfont=dict(size=14))
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # 数据流监控
+        st.markdown("**Realtime Data Flow**")
+        flow_df = pd.DataFrame([
+            ["ERP→Core", "Orders", "Normal", "5ms"],
+            ["Legal→Core", "Contracts", "Delay", "320ms"],
+            ["Finance→Core", "Cost", "Normal", "8ms"],
+            ["News→Core", "Risk", "Normal", "120ms"]
+        ], columns=["Channel", "Data", "Status", "Latency"])
+        st.dataframe(flow_df.style.applymap(
+            lambda x: "color: red" if x=="Delay" else None), 
+            use_container_width=True)
+
+    # 新增Tracking部分
+    with tab4:
+        st.subheader("Execution Tracking")
+        task_df = pd.DataFrame([
+            ["Contract Update", "Legal", "Audit", "Risk<30"],
+            ["Payment Adjust", "Finance", "SCM", "Deviation<5%"],
+            ["CRM", "Procurement", "CS", "Rating≥4"]
+        ], columns=["Task", "Owner", "Supervisor", "KPI"])
+        
+        st.dataframe(task_df.style.applymap(
+            lambda x: "background-color: #e6f3ff" if x=="Legal" else ""), 
+            use_container_width=True)
+        
+        st.button("Simulate Completion", help="Send completion notification")
+
 
 # Case library page
 else:
